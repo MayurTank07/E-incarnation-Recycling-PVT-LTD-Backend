@@ -52,7 +52,7 @@ adminSchema.methods.matchPassword = async function(enteredPassword) {
 };
 
 // Indexes for performance
-adminSchema.index({ email: 1 }, { unique: true });
+// Note: email index created by unique: true in schema definition
 adminSchema.index({ lastLogin: -1 });
 adminSchema.index({ isActive: 1, role: 1 });
 

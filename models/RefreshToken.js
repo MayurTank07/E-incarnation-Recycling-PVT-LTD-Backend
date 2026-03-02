@@ -46,9 +46,9 @@ refreshTokenSchema.virtual('isRevoked').get(function() {
 });
 
 // Indexes for performance
-refreshTokenSchema.index({ token: 1 }, { unique: true });
+// Note: token index created by unique: true in schema definition
+// Note: expiresAt index created by TTL index above (line 38)
 refreshTokenSchema.index({ admin: 1, isActive: 1 });
-refreshTokenSchema.index({ expiresAt: 1 }); // Already has TTL index
 refreshTokenSchema.index({ createdAt: -1 });
 
 const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchema);
