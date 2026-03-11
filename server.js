@@ -99,6 +99,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Explicit OPTIONS handler for CORS preflight
+app.options('*', cors(corsOptions));
+
 // Body parser with size limits
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -119,11 +122,22 @@ app.get('/', (req, res) => {
   res.json({ message: 'E-Incarnation API is running...' });
 });
 
+// Health check endpoints (both /health and /api/health)
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    port: PORT || process.env.PORT || 5001
+    port: PORT || process.env.PORT || 5001,
+    message: 'Server is running'
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    success: true,
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    message: 'API is running'
   });
 });
 
