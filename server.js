@@ -59,18 +59,19 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://www.google.com", "https://www.gstatic.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
       connectSrc: [
         "'self'",
         "https://www.e-incarnation.com",
         "https://e-incarnation.com",
-        "https://e-incarnation-recycling-pvt-ltd.vercel.app"
+        "https://e-incarnation-recycling-pvt-ltd.vercel.app",
+        "https://www.google.com"
       ],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
+      frameSrc: ["https://www.google.com"],
     },
   },
   crossOriginEmbedderPolicy: false,
