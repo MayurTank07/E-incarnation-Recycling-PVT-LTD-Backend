@@ -14,7 +14,7 @@ const validateEmailConfig = () => {
   }
 };
 
-// Create reusable transporter
+// Create reusable transporter with IPv4 preference and connection settings
 const createTransporter = () => {
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -24,9 +24,35 @@ const createTransporter = () => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
     },
+    // Force IPv4 to avoid ENETUNREACH errors on Render
+    family: 4,
+    // Connection timeout settings
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 30000, // 30 seconds
+    // Additional settings for reliability
+    pool: false, // Disable connection pooling
+    maxConnections: 1,
     debug: true, // Enable debug output
     logger: true, // Log to console
   });
+};
+
+// Retry helper function with exponential backoff
+const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      const delay = baseDelay * Math.pow(2, attempt - 1);
+      console.log(`⏳ Retry attempt ${attempt}/${maxRetries} after ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
 };
 
 // Send contact form notification email
@@ -206,8 +232,12 @@ Please respond to ${formData.email}
       `.trim(),
     };
 
-    // Send email
-    const info = await transporter.sendMail(mailOptions);
+    // Send email with retry logic
+    const info = await retryWithBackoff(
+      () => transporter.sendMail(mailOptions),
+      3, // Max 3 retries
+      2000 // Start with 2 second delay
+    );
     
     console.log('✅ Email notification sent successfully!');
     console.log('   Message ID:', info.messageId);
