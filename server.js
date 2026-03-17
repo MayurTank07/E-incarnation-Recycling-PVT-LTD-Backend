@@ -61,7 +61,12 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
-      connectSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        "https://www.e-incarnation.com",
+        "https://e-incarnation.com",
+        "https://e-incarnation-recycling-pvt-ltd.vercel.app"
+      ],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
@@ -73,15 +78,15 @@ app.use(helmet({
 }));
 
 // CORS Configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',') 
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
   : [
-      'http://localhost:5173', 
-      'http://localhost:5174',
-      'https://www.e-incarnation.com',
-      'https://e-incarnation.com',
-      'https://e-incarnation-recycling-pvt-ltd.vercel.app'
-    ];
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://www.e-incarnation.com',
+    'https://e-incarnation.com',
+    'https://e-incarnation-recycling-pvt-ltd.vercel.app'
+  ];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -124,7 +129,7 @@ app.get('/', (req, res) => {
 
 // Health check endpoints (both /health and /api/health)
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
+  res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     port: PORT || process.env.PORT || 5001,
@@ -133,7 +138,7 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
+  res.status(200).json({
     success: true,
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -163,6 +168,15 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
+
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    message: 'Server is running'
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
