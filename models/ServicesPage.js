@@ -23,6 +23,7 @@ const servicesPageSchema = new mongoose.Schema({
     title: String,
     description: String,
     image: String,
+    imagePublicId: String,
     features: [String],
     order: Number
   }],
