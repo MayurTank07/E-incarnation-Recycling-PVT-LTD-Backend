@@ -24,6 +24,18 @@ const contactPageSchema = new mongoose.Schema({
   headOfficeAddress: {
     type: String,
     default: ''
+  },
+  phone1: {
+    type: String,
+    default: '022 47494262'
+  },
+  phone2: {
+    type: String,
+    default: '9137287173'
+  },
+  email: {
+    type: String,
+    default: 'info@e-incarnation.com'
   }
 }, {
   timestamps: true
